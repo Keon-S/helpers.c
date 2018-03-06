@@ -11,6 +11,7 @@ int duration(string fraction)
     //Does the conversion. fraction[2] is the bottom of the frac
     return 8/(fraction[2] - 0);
 }
+//Note: I know this works with notes.c
 // Calculates frequency (in Hz) of a note
 int frequency(string note)
 {
