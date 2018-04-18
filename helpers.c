@@ -4,32 +4,58 @@
 #include <string.h>
 #include "helpers.h"
 #include <math.h>
+#define APOS 5
 
 // Converts a fraction formatted as X/Y to eighths
 int duration(string fraction)
 {
     //Does the conversion. fraction[2] is the bottom of the frac
-    return 8/(fraction[2] - 0);
+    return (8 * (fraction[0] - '0')) / (fraction[2] - '0');
 }
-//Note: I know this works with notes.c
 // Calculates frequency (in Hz) of a note
 int frequency(string note)
 {
+    //Declare array of notes
+    const char keys[] = {'C', 'D', 'E', 'F', 'G', 'A', 'B'};
     //declare place
     int place;
     //calculate semi-tones from A
-    place = ((((int)note[0]) - 65) + (strlen(note) - 2)) + ((int)note[0]);
-    place -= 65;
+    for (int i = 0; i < 7; i++)
+    {
+        if (keys[i] == note[0])
+        {
+            //Get number of semitones from A
+            place = 2 * (i - APOS);
+            place++;
+            //Correct for the lack of a black key between E and F
+            if (place / 2 > -2)
+            {
+                place--;
+            }
+        }
+    }
+    //Add # and b
+    if (strlen(note) == 3)
+    {
+        if (note[1] == '#')
+        {
+            place++;
+        }
+        else
+        {
+            place--;
+        }
+    }
     //find the octave
-    int octave = atoi(&note[(1*(strlen(note) - 2)+1)]);
+    int octave = atoi(&note[(1 * (strlen(note) - 2) + 1)]);
     //calculate the freq and return
-    float hold = (((float)place)/12);
+    float hold = (((float)place) / 12);
     hold = pow(2, hold);
     hold = hold * 440;
-    hold = hold/8;
-    float temp = pow(2,((float)(octave - 1)));
-    hold = hold*temp;
-    int tmp = (int) hold;
+    hold = hold / 8;
+    float temp = pow(2, ((float)(octave - 1)));
+    hold = hold * temp;
+    int tmp = round(hold);
     return tmp;
 }
 
@@ -37,7 +63,7 @@ int frequency(string note)
 // Determines whether a string represents a rest
 bool is_rest(string s)
 {
-    if (s[0] != 'A' && s[0] != 'B' && s[0] != 'C' && s[0] != 'D' && s[0] != 'E' && s[0] != 'F' && s[0] != 'G')
+    if (s[0] == '\0')
     {
         return true;
     }
